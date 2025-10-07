@@ -1,0 +1,282 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Smart Earning Platform</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+:root{
+  --brand:#2196f3;
+  --accent:#4CAF50;
+  --danger:#f44336;
+  --muted:#f4f4f4;
+  --card-bg:#ffffff;
+  --max-width:940px;
+  --radius:10px;
+  --shadow: rgba(0,0,0,0.1);
+}
+body{ margin:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:var(--muted); color:#222; }
+.container{ max-width:var(--max-width); margin:auto; padding:24px 16px; }
+.btn{ background:var(--brand); color:#fff; border:none; border-radius:8px; padding:12px 20px; cursor:pointer; font-weight:600; transition:0.2s; box-shadow: 0 3px 6px var(--shadow);}
+.btn:hover{ opacity:0.9; box-shadow: 0 5px 15px var(--shadow);}
+header{ background:var(--brand); color:#fff; padding:16px 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; box-shadow: 0 2px 8px var(--shadow);}
+header .logo{ font-weight:bold; font-size:22px; display:flex; align-items:center; gap:10px; }
+header .logo i { color:#ffdd57; }
+section{ margin:36px 0; }
+h2{ text-align:center; font-size:24px; margin-bottom:16px; font-weight:700; letter-spacing:1.1px; color:var(--brand);}
+h3 { margin: 0 0 12px; font-weight:600; color:#333; }
+.card{ background:var(--card-bg); border-radius:var(--radius); box-shadow: 0 8px 20px rgba(0,0,0,0.08); padding:20px; margin:18px auto; max-width:440px; box-sizing:border-box; }
+.wheel-container{ position:relative; margin:24px auto; width:100%; max-width:280px; height:auto; }
+#wheel{ width:280px; height:280px; display:block; border-radius:50%; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+#pointer{ position:absolute; top:-28px; left:50%; transform:translateX(-50%); font-size:40px; color:var(--danger); text-shadow: 1px 1px 3px #a00; user-select:none;}
+.video-wrap iframe{ width:100%; height:240px; border-radius:12px; border:0; box-shadow: 0 5px 15px rgba(0,0,0,0.1);}
+footer{ position:fixed; bottom:0; left:0; right:0; background:var(--brand); color:#fff; display:flex; justify-content:space-around; flex-wrap:wrap; padding:14px 0; box-shadow:0 -4px 15px rgba(0,0,0,0.12); font-size:14px; }
+footer .item{ text-align:center; cursor:pointer; flex:1; padding:8px 0; transition: background 0.2s ease;}
+footer .item:hover{ background:rgba(255,255,255,0.15); }
+footer .item.active{background:rgba(255,255,255,0.25);border-radius:10px;}
+footer .item i{ display:block; font-size:20px; margin-bottom:6px; }
+main { padding-bottom: 120px; }
+.input-box {position: relative;margin: 12px 0;}
+.input-box i {position: absolute;left: 14px;top: 50%;transform: translateY(-50%);color: var(--brand);font-size: 18px;}
+.input-box input {width: 100%;padding: 12px 12px 12px 42px;border: 1.5px solid #ccc;border-radius: 8px;box-sizing: border-box;font-size: 16px;}
+.input-box input:focus {outline: none;border-color: var(--brand);box-shadow: 0 0 6px rgba(33,150,243,0.4);}
+@media(max-width:480px){
+  header{ flex-direction:column; align-items:flex-start; gap:12px; }
+  .wheel-container{ max-width:220px; }
+  .card{ width:90%; }
+  .btn{ padding:10px 16px; font-size:15px; }
+  footer .item{ font-size:13px; }
+  #pointer{ font-size:28px; top:-22px; }
+  .video-wrap iframe{ height:180px; }
+}
+#auth-container {max-width: 360px;background: var(--card-bg);margin: 60px auto;padding: 24px 32px 32px;border-radius: var(--radius);box-shadow: 0 10px 30px rgba(0,0,0,0.1);}
+#auth-container h2 {text-align: center;margin-bottom: 24px;color: var(--brand);}
+#auth-container .toggle-link {color: var(--brand);cursor: pointer;text-align: center;display: block;margin-top: 12px;text-decoration: underline;font-size: 14px;}
+.error-message {color: var(--danger);font-size: 14px;margin-top: -8px;margin-bottom: 12px;text-align: center;}
+#app {display:none;}
+.coin-icon {display:block;text-align:center;font-size:48px;color:var(--brand);margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<!-- AUTH (LOGIN/SIGNUP) -->
+<div id="auth-container">
+  <form id="login-form" style="display:block;">
+    <i class="fas fa-coins coin-icon"></i>
+    <h2>Smart Earning Platform</h2>
+    <div class="input-box"><i class="fas fa-envelope"></i><input type="email" id="login-email" placeholder="Email" required></div>
+    <div class="input-box"><i class="fas fa-lock"></i><input type="password" id="login-password" placeholder="Password" required></div>
+    <button type="submit" class="btn" style="width:100%;">Login</button>
+    <div class="error-message" id="login-error"></div>
+    <span class="toggle-link" id="to-signup">Don't have an account? Sign up</span>
+  </form>
+
+
+  <form id="signup-form" style="display:none;">
+    <i class="fas fa-coins coin-icon"></i>
+    <h2>User Signup</h2>
+    <div class="input-box"><i class="fas fa-user"></i><input type="text" id="signup-name" placeholder="Fullname" required></div>
+    <div class="input-box"><i class="fas fa-envelope"></i><input type="email" id="signup-email" placeholder="Email" required></div>
+    <div class="input-box"><i class="fas fa-phone"></i><input type="tel" id="signup-phone" placeholder="Phone number" required></div>
+    <div class="input-box"><i class="fas fa-lock"></i><input type="password" id="signup-password" placeholder="Password" required></div>
+    <button type="submit" class="btn" style="width:100%;">Sign Up</button>
+    <div class="error-message" id="signup-error"></div>
+    <span class="toggle-link" id="to-login-from-signup">Already have an account? Login</span>
+  </form>
+</div>
+
+ <!-- APP -->
+<div id="app">
+<header>
+  <div class="logo"><i class="fas fa-coins"></i> SEP | Balance: $<span id="balance">0.00</span></div>
+  <button class="btn" onclick="withdraw()">Withdraw</button>
+</header>
+
+<div class="container"><main>
+  <section id="tasks">
+    <h2>Do Tasks</h2>
+
+    <a href="https://example.com/survey-offer" target="_blank">
+   <div class="card"><h3>Complete a Survey</h3><button style="background:#0f63d7;color:white;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;" onclick="earnFromTask(0.5); window.open('https://example.com/survey-offer','_blank');">
+   <i class="fa fa-list-check"></i> Complete Survey & Earn $0.5
+  </button></div></a>
+
+
+    <a href="myapp.apk" download>
+    <div class="card"><h3>App Install</h3><button style="background:#0f63d7;color:white;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;">
+    <i class="fa fa-download"></i>Install & Earn $0.2
+  </button>
+</a>
+</div>
+
+ <a href="myapp.apk" download>
+    <div class="card"><h3>App Install</h3><button style="background:#0f63d7;color:white;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;">
+    <i class="fa fa-download"></i>Install & Earn $0.2
+  </button>
+</a>
+</div>
+
+ <a href="myapp.apk" download>
+    <div class="card"><h3>App Install</h3><button style="background:#0f63d7;color:white;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;">
+    <i class="fa fa-download"></i>Install & Earn $0.2
+  </button>
+</a>
+</div>
+  
+  </section>
+
+  <section id="spin">
+    <h2>Spin & Win</h2>
+    <div class="wheel-container">
+      <canvas id="wheel" width="280" height="280"></canvas>
+      <div id="pointer">▼</div>
+    </div>
+    <div style="text-align:center;"><button class="btn" id="spinBtn" onclick="spinWheel()">Spin</button></div>
+  </section>
+
+  <section id="videos">
+    <h2>Watch Videos</h2>
+    <div class="card video-wrap">
+      <h3>Promo Video</h3>
+      <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+      <div style="text-align:center; margin-top:14px;"><button class="btn" onclick="earnFromVideo(0.25)">Watch & Earn $0.25</button></div>
+    </div>
+  </section>
+
+  <section id="questions">
+    <h2>Answer Questions</h2>
+    <div class="card"><h3>What is 2+2?</h3>
+      <button class="btn" onclick="answerQuestion(this,4)">4</button>
+      <button class="btn" onclick="answerQuestion(this,0)">3</button>
+    </div>
+  </section>
+
+  <section id="profile">
+    <h2>Your Profile</h2>
+    <div class="card" style="max-width:400px;margin:auto;text-align:center;">
+      <p><strong>Name:</strong> Demo User</p>
+      <p><strong>Email:</strong> user@example.com</p>
+      <p><strong>Balance:</strong> $<span id="profile-balance">0.00</span></p>
+      <button class="btn" onclick="updateProfileBalance()">Refresh Balance</button>
+    </div>
+  </section>
+</main></div>
+
+<footer>
+  <div class="item"><i class="fas fa-tasks"></i>Tasks</div>
+  <div class="item"><i class="fas fa-coins"></i>Spin</div>
+  <div class="item"><i class="fas fa-video"></i>Videos</div>
+  <div class="item"><i class="fas fa-user"></i>Profile</div>
+</footer>
+</div>
+
+<script>
+let balance = 0, tasksCompleted = 0, canEarn = false;
+
+const sections = {
+  tasks: document.getElementById("tasks"),
+  spin: document.getElementById("spin"),
+  videos: document.getElementById("videos"),
+  questions: document.getElementById("questions"),
+  profile: document.getElementById("profile")
+};
+
+function showSection(id){
+  Object.values(sections).forEach(s=>s.style.display="none");
+  sections[id].style.display="block";
+  if(id==="spin") drawWheel(); // ✅ Fix: redraw wheel when opening
+}
+showSection("tasks");
+
+function updateBalance(){
+  document.getElementById("balance").textContent = balance.toFixed(2);
+  document.getElementById("profile-balance").textContent = balance.toFixed(2);
+}
+
+function earnFromTask(amount){
+  tasksCompleted++;
+  balance += amount;
+  updateBalance();
+  if(tasksCompleted>=2 && !canEarn){
+    canEarn = true;
+    alert("✅ You can now earn from videos, spins, and questions!");
+  } else alert(`Earned $${amount}`);
+}
+
+function earnFromVideo(amount){
+  if(!canEarn){alert("Complete at least 2 tasks first.");return;}
+  balance += amount; updateBalance(); alert(`Earned $${amount}`);
+}
+
+function answerQuestion(btn, reward){
+  if(!canEarn){alert("Complete at least 2 tasks first.");return;}
+  if(!btn.classList.contains("answered")){
+    balance += reward; updateBalance();
+    btn.classList.add("answered"); btn.disabled=true;
+    btn.style.background = reward>0?"var(--accent)":"var(--danger)";
+  }
+}
+
+const segments=[
+  {label:"$0",value:0,color:"#f44336"},
+  {label:"$0.10",value:0.1,color:"#FFC107"},
+  {label:"$0.25",value:0.25,color:"#4CAF50"},
+  {label:"$0.50",value:0.5,color:"#2196F3"},
+  {label:"$1",value:1,color:"#9C27B0"}
+];
+const wheel=document.getElementById("wheel");
+const ctx=wheel.getContext("2d");
+const radius=wheel.width/2;
+const angle=(2*Math.PI)/segments.length;
+
+function drawWheel(rot=0){
+  ctx.clearRect(0,0,wheel.width,wheel.height);
+  for(let i=0;i<segments.length;i++){
+    const start=rot+i*angle,end=start+angle;
+    ctx.beginPath();ctx.moveTo(radius,radius);
+    ctx.arc(radius,radius,radius,start,end);
+    ctx.fillStyle=segments[i].color;ctx.fill();
+    ctx.save();ctx.translate(radius,radius);
+    ctx.rotate(start+angle/2);ctx.fillStyle="#fff";
+    ctx.textAlign="right";ctx.font="bold 16px Arial";
+    ctx.fillText(segments[i].label,radius-10,5);ctx.restore();
+  }
+}
+document.addEventListener("DOMContentLoaded",()=>drawWheel()); // ✅ fix wheel display
+
+function spinWheel(){
+  if(!canEarn){alert("Complete 2 tasks first.");return;}
+  const btn=document.getElementById("spinBtn");btn.disabled=true;
+  const spinTime=3000,totalRot=10*Math.PI+Math.random()*2*Math.PI,start=performance.now();
+  function anim(t){
+    const p=Math.min((t-start)/spinTime,1),rot=totalRot*p;
+    drawWheel(rot);
+    if(p<1)requestAnimationFrame(anim);
+    else{
+      const finalRot=rot%(2*Math.PI);
+      const idx=Math.floor((segments.length-(finalRot/(2*Math.PI))*segments.length)%segments.length);
+      const reward=segments[idx].value;balance+=reward;updateBalance();
+      alert(`You won ${segments[idx].label}`);btn.disabled=false;
+    }
+  }
+  requestAnimationFrame(anim);
+}
+
+function updateProfileBalance(){updateBalance();}
+
+const footerItems=document.querySelectorAll("footer .item");
+footerItems.forEach((item,i)=>item.addEventListener("click",()=>{
+  footerItems.forEach(it=>it.classList.remove("active"));
+  item.classList.add("active");
+  ["tasks","spin","videos","profile"][i] && showSection(["tasks","spin","videos","profile"][i]);
+}));
+
+// AUTH LOGIC
+document.getElementById("to-signup").onclick=()=>{document.getElementById("login-form").style.display="none";document.getElementById("signup-form").style.display="block";}
+document.getElementById("to-login-from-signup").onclick=()=>{document.getElementById("signup-form").style.display="none";document.getElementById("login-form").style.display="block";}
+document.getElementById("login-form").onsubmit=(e)=>{e.preventDefault();document.getElementById("auth-container").style.display="none";document.getElementById("app").style.display="block";drawWheel();}
+document.getElementById("signup-form").onsubmit=(e)=>{e.preventDefault();alert("Account created! Please login.");document.getElementById("signup-form").style.display="none";document.getElementById("login-form").style.display="block";}
+</script>
+</body>
+</html>
